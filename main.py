@@ -8,7 +8,7 @@ import requests
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
-weather = bot(WEATHER_API)
+
 @dp.message(F.photo)
 async def aussie(message: Message):
     list = ['Ого, какая прекрасная собака!','Вот это пёсель','Какой забавный зверь! ','Хороший мальчик!']
@@ -29,12 +29,37 @@ async def photo(message: Message):
 async def help(message: Message):
     await message.answer('Этот бот умеет выполнять команды: \n /start - Начало работы \n /help - Справка \n /weather - Прогноз погоды на неделю \n /photo - Случайная фотография собачки')
 
+
 @dp.message(Command('weather'))
 async def weather_command(message: Message):
-    response = requests.get(f'http://api.weatherapi.com/v1/forecast.json?key={WEATHER_API}&q=Москва&days=7')
+
+    api_key = WEATHER_API
+    city = 'Severomorsk'
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric&lang=ru'
+
+
+    response = requests.get(url)
     data = response.json()
-    forecast = data['forecast']['forecastday'][0]['day']['condition']['text']  # Пример получения прогноза
-    await message.answer(f'Прогноз погоды на неделю: {forecast}')
+
+    if data['cod'] == 200:
+        temp = data['main']['temp']
+        weather_description = data['weather'][0]['description']
+        humidity = data['main']['humidity']
+        wind_speed = data['wind']['speed']
+
+
+        weather_report = (
+            f"Погода в {city} сейчас:\n"
+            f"Температура: {temp}°C\n"
+            f"Описание: {weather_description.capitalize()}\n"
+            f"Влажность: {humidity}%\n"
+            f"Скорость ветра: {wind_speed} м/с"
+        )
+    else:
+        weather_report = "Не удалось получить данные о погоде."
+
+
+    await message.answer(weather_report)
 
 @dp.message(CommandStart())
 async def start(message: Message):
