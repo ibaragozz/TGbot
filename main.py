@@ -2,12 +2,13 @@ import asyncio
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
-from config import TOKEN
+from config import TOKEN, WEATHER_API
 import random
+import requests
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
-
+weather = bot(WEATHER_API)
 @dp.message(F.photo)
 async def aussie(message: Message):
     list = ['Ого, какая прекрасная собака!','Вот это пёсель','Какой забавный зверь! ','Хороший мальчик!']
@@ -26,7 +27,14 @@ async def photo(message: Message):
 
 @dp.message(Command('help'))
 async def help(message: Message):
-    await message.answer('Этот бот умеет выполнять команды: \n /start - Начало работы \n /help - Справка')
+    await message.answer('Этот бот умеет выполнять команды: \n /start - Начало работы \n /help - Справка \n /weather - Прогноз погоды на неделю \n /photo - Случайная фотография собачки')
+
+@dp.message(Command('weather'))
+async def weather_command(message: Message):
+    response = requests.get(f'http://api.weatherapi.com/v1/forecast.json?key={WEATHER_API}&q=Москва&days=7')
+    data = response.json()
+    forecast = data['forecast']['forecastday'][0]['day']['condition']['text']  # Пример получения прогноза
+    await message.answer(f'Прогноз погоды на неделю: {forecast}')
 
 @dp.message(CommandStart())
 async def start(message: Message):
