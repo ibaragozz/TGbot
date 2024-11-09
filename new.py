@@ -70,13 +70,17 @@ async def city(message: Message, state: FSMContext):
     async with aiohttp.ClientSession() as session:
         async with session.get(f'https://api.openweathermap.org/data/2.5/weather?q={user_data['city']}&appid={WEATHER_API}&units=metric') as resp:
             if resp.status == 200:
-            weather_data = await resp.json()
-            main = weather_data['main']
-            weather = weather_data['weather'][0]
-            temp = main['temp']
-            humidity = main['humidity']
-            description = weather['description']
-            await message.answer(f'Погода в городе {user_data["city"]}: {description}, температура {temp}°C, влажность {humidity}%')
+                weather_data = await resp.json()
+                main = weather_data['main']
+                weather = weather_data['weather'][0]
+                temp = main['temp']
+                humidity = main['humidity']
+                description = weather['description']
+                weather_report = (f'Погода в городе {user_data["city"]}: {description}, \nтемпература {temp}°C, \nвлажность {humidity}%, описание {weather["description"]}')
+                await message.answer(weather_report)
+            else:
+                await message.answer('Не удалось получить данные о погоде.')
+    await state.clear()
 
 
 
