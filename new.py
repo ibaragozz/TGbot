@@ -1,19 +1,4 @@
-# import sqlite3
-#
-# conn = sqlite3.connect('bot.db')
-# c = conn.cursor()
-#
-# c.execute("""
-#     CREATE TABLE IF NOT EXISTS users (
-#     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#     name TEXT,
-#     age INTEGER,
-#     grade TEXT)
-#     """)
-#
-# conn.commit()
-# conn.close()
-
+# Создаем бота погоды для определенного юзера
 
 import asyncio
 from aiogram import Bot, Dispatcher, F, types
@@ -28,10 +13,30 @@ import aiohttp
 import logging
 import sqlite3
 
-
-
 vbot = Bot(token=TOKEN)
 dp = Dispatcher()
+
+logging.basicConfig(level=logging.INFO)
+
+class Form(StatesGroup):
+    name = State()
+    age = State()
+    city = State()
+
+def init_db():
+    conn = sqlite3.connect('user_data.db')
+    cur = conn.cursor()
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    age INTEGER,
+    city TEXT)
+    """)
+    conn.commit()
+    conn.close()
+
+
 
 
 
