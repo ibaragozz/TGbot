@@ -76,7 +76,7 @@ async def city(message: Message, state: FSMContext):
                 temp = main['temp']
                 humidity = main['humidity']
                 description = weather['description']
-                weather_report = (f'Погода в городе {user_data["city"]}: {description}, \nтемпература {temp}°C, \nвлажность {humidity}%, описание {weather["description"]}')
+                weather_report = (f'Погода в городе {user_data["city"]}: \nтемпература {temp}°C, \nвлажность {humidity}%, \nописание {weather["description"]}')
                 await message.answer(weather_report)
             else:
                 await message.answer('Не удалось получить данные о погоде.')
