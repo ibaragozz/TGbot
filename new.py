@@ -4,7 +4,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.types import ContentType
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, FSInputFile, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
@@ -39,9 +39,18 @@ def init_db():
 
 init_db()
 
+@dp.callback_query(F.data == 'news')
+async def news(call: types.CallbackQuery):
+    await call.answer("Новости подгружаются", show_alert=True)
+    await call.message.edit_text("Вот свежие новости:", reply_markup=await kb.test_keyboard())
+
+@dp.message(F.text == 'Кнопка1')
+async def test_button(message: Message):
+    await message.answer("Обработка реплай кнопки")
+
 @dp.message(CommandStart())
 async def start(message: Message, state: FSMContext):
-    await message.answer("Привет!\nКак тебя зовут?", reply_markup=kb.inline)
+    await message.answer("Привет!\nКак тебя зовут?", reply_markup=kb.inline_keyboard_test)
     await state.set_state(Form.name.state)
 
 @dp.message(Form.name)
