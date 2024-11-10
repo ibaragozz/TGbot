@@ -12,6 +12,7 @@ from config import TOKEN, WEATHER_API
 import aiohttp
 import logging
 import sqlite3
+import keyboards as kb
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -40,7 +41,7 @@ init_db()
 
 @dp.message(CommandStart())
 async def start(message: Message, state: FSMContext):
-    await message.answer("Привет!\nКак тебя зовут?")
+    await message.answer("Привет!\nКак тебя зовут?", reply_markup=kb.inline)
     await state.set_state(Form.name.state)
 
 @dp.message(Form.name)
